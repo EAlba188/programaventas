@@ -1,0 +1,63 @@
+<odoo>
+  <data>
+    <!-- explicit list view definition -->
+
+    <record model="ir.ui.view" id="programaventas.list_venta_tree">
+      <field name="name">programaventas.venta.listado.tree</field>
+      <field name="model">programaventas.venta</field>
+      <field name="arch" type="xml">
+        <tree>
+          <field name="idproducto">
+            <tree string="IDs Productos">
+              <field name="id"/>
+            </tree>
+          </field>
+          <field name="dni">
+            <tree string="DNIs Clientes">
+              <field name="dni"/>
+            </tree>
+          </field>
+          <field name="precio"/>
+          <field name="fecha"/>
+          <field name="pago"/>
+        </tree>
+      </field>
+    </record>
+
+
+    <!-- actions opening views on models -->
+
+    <record model="ir.actions.act_window" id="programaventas.action_window">
+      <field name="name">Ventas</field>
+      <field name="res_model">programaventas.venta</field>
+      <field name="view_mode">tree,form</field>
+    </record>
+
+
+    <!-- server action to the one above -->
+<!--
+    <record model="ir.actions.server" id="programaventas.action_server">
+      <field name="name">programaventas server</field>
+      <field name="model_id" ref="model_programaventas_programaventas"/>
+      <field name="state">code</field>
+      <field name="code">
+        action = {
+          "type": "ir.actions.act_window",
+          "view_mode": "tree,form",
+          "res_model": model._name,
+        }
+      </field>
+    </record>
+-->
+
+    <!-- menu categories -->
+
+    <menuitem name="Ventas" id="programaventas.ventas" parent="programaventas.menu_root"/>
+
+    <!-- actions -->
+
+    <menuitem name="Lista Ventas" id="programaventas.productos_list" parent="programaventas.ventas"
+              action="programaventas.action_window"/>
+
+  </data>
+</odoo>
