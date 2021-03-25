@@ -8,7 +8,7 @@
       <field name="arch" type="xml">
         <tree>
           <field name="id"/>
-          <field name="nombre"/>
+          <field name="name"/>
           <field name="precio"/>
           <field name="numeroVentas"/>
           <field name="brutoGenerado"/>
@@ -19,7 +19,7 @@
 
     <!-- actions opening views on models -->
 
-    <record model="ir.actions.act_window" id="programaventas.action_window">
+    <record model="ir.actions.act_window" id="programaventas.action_window_producto">
       <field name="name">Productos</field>
       <field name="res_model">programaventas.producto</field>
       <field name="view_mode">tree,form</field>
@@ -53,7 +53,7 @@
     <!-- actions -->
 
     <menuitem name="Lista Productos" id="programaventas.productos_list" parent="programaventas.productos"
-              action="programaventas.action_window"/>
+              action="programaventas.action_window_producto"/>
 
   </data>
 </odoo>
