@@ -12,13 +12,9 @@ class Producto(models.Model):
     numeroVentas = fields.Integer(readonly=1, string="Numero Ventas")
     brutoGenerado = fields.Float(string="Bruto Total", readonly=1, default=0)
 
-    @api.depends
-    def calcularVentas(self):
-        res = 0
-        for venta in Venta:
-            if (self.id==venta.idproducto):
-                res=res+1
-        self.numeroVentas=res
+    def sumarVentas(self):
+        self.numeroVentas+=1
+
 
 
 class Venta(models.Model):
@@ -26,11 +22,29 @@ class Venta(models.Model):
 
 
     #CREAR NUMERO DE REFERENCIA AUTOINCREMENTAL
+    #Añadir descuentos?
     dni = fields.Many2one('programaventas.cliente', string="Cliente")
+    unidades = fields.Integer(string="Cantidad")
     idproducto = fields.Many2one('programaventas.producto', string="Producto")
-    precio = fields.Float(string="Precio", digits=(6,2), readonly=1, related='idproducto.precio')
+    precio = fields.Float(invisible=True)
+    precio_copia = fields.Float(string="Precio Total", readonly=1)
+    precioUnitario = fields.Float(string="Precio unitario", readonly=1, related='idproducto.precio', default=0)
     fecha = fields.Date(string="Fecha", default=datetime.today(), readonly=1)
     pago = fields.Selection(string="Forma de pago", selection=[('efectivo',"Efectivo"),('tarjeta',"Tarjeta")])
+
+    @api.onchange('unidades')
+    def setUnits(self):
+        self.precio_copia = self.unidades * self.precioUnitario
+        self.precio = self.unidades * self.precioUnitario
+        #self.precio=self.unidades*self.idproducto.precio - another option
+
+    @api.onchange('unidades')
+    def actualizarProducto(self):
+        self.idproducto.numeroVentas+=self.unidades
+        #el problema es que si borramos el registro no cambia ya el numero en la zona productos
+        self.idproducto.brutoGenerado=self.idproducto.numeroVentas*self.idproducto.precio
+
+
 
 
 

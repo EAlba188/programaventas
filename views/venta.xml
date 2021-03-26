@@ -9,6 +9,7 @@
         <tree>
           <field name="idproducto"/>
           <field name="dni"/>
+          <field name="unidades"/>
           <field name="precio"/>
           <field name="fecha"/>
           <field name="pago"/>
