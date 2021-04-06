@@ -27,6 +27,7 @@
         'views/producto.xml',
         'views/cliente.xml',
         'views/venta.xml',
+        'views/historico.xml',
         'views/templates.xml',
     ],
     # only loaded in demonstration mode

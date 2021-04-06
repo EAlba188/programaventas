@@ -6,6 +6,24 @@ from datetime import datetime
 class Producto(models.Model):
     _name = 'programaventas.producto'
 
+
+    def write(self, values):
+
+
+        producto_write = super(Producto, self).write(values)
+
+        historico = {
+            'producto': self.id,
+            'name': self.name,
+            'precio': self.precio,
+            'fecha': datetime.today()
+        }
+        self.env['programaventas.historico'].create(historico)
+
+        return producto_write
+
+
+
     @api.model
     def actualizarProducto(self):
 
@@ -19,11 +37,14 @@ class Producto(models.Model):
                 x.numeroVentas = 0
                 x.brutoGenerado = 0
 
+
     id = fields.Char(required=True, size=20, string="ID")   #si le das id se hace solo???
     name = fields.Char(string="Nombre Producto")
     precio = fields.Float(string="Precio", digits=(6,2))
     numeroVentas = fields.Integer(string="Numero Ventas", compute=actualizarProducto)
     brutoGenerado = fields.Float(string="Bruto Total", default=0, compute=actualizarProducto)
+
+
 
 
 
@@ -37,6 +58,9 @@ class Venta(models.Model):
 
             #self.env['programaventas.producto'].browse(1) elemento
             #self.env['programaventas.producto'].search([("name","=","nombreProducto")]) lista
+
+
+
 
 
     #CREAR NUMERO DE REFERENCIA AUTOINCREMENTAL
@@ -61,6 +85,13 @@ class Cliente(models.Model):
 
 class Historico(models.Model):
     _name = 'programaventas.historico'
+
+
+    producto = fields.Char(string="ID Producto")
+    name = fields.Char(string="Nombre")
+    precio = fields.Float(string="Precio")
+    fecha = fields.Date(string="Fecha")
+
 
     #ID del producto
     #Nombre del producto
