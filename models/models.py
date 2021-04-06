@@ -6,19 +6,37 @@ from datetime import datetime
 class Producto(models.Model):
     _name = 'programaventas.producto'
 
-    id = fields.Char(required=True, size=20, string="ID")
+    @api.model
+    def actualizarProducto(self):
+
+        for x in self:
+            busqueda = self.env['programaventas.venta'].search([('idproducto.id', '=', x.id)])
+            if(len(busqueda)>0):
+                for i in busqueda:
+                    x.numeroVentas += i.unidades
+                    x.brutoGenerado += i.precio
+            else:
+                x.numeroVentas = 0
+                x.brutoGenerado = 0
+
+    id = fields.Char(required=True, size=20, string="ID")   #si le das id se hace solo???
     name = fields.Char(string="Nombre Producto")
     precio = fields.Float(string="Precio", digits=(6,2))
-    numeroVentas = fields.Integer(readonly=1, string="Numero Ventas")
-    brutoGenerado = fields.Float(string="Bruto Total", readonly=1, default=0)
-
-    def sumarVentas(self):
-        self.numeroVentas+=1
+    numeroVentas = fields.Integer(string="Numero Ventas", compute=actualizarProducto)
+    brutoGenerado = fields.Float(string="Bruto Total", default=0, compute=actualizarProducto)
 
 
 
 class Venta(models.Model):
     _name = 'programaventas.venta'
+
+    @api.depends('unidades', 'precioUnitario')
+    def actualizarTotal(self):
+        for x in self:
+            x.precio=x.unidades*x.precioUnitario
+
+            #self.env['programaventas.producto'].browse(1) elemento
+            #self.env['programaventas.producto'].search([("name","=","nombreProducto")]) lista
 
 
     #CREAR NUMERO DE REFERENCIA AUTOINCREMENTAL
@@ -26,26 +44,10 @@ class Venta(models.Model):
     dni = fields.Many2one('programaventas.cliente', string="Cliente")
     unidades = fields.Integer(string="Cantidad")
     idproducto = fields.Many2one('programaventas.producto', string="Producto")
-    precio = fields.Float(invisible=True)
-    precio_copia = fields.Float(string="Precio Total", readonly=1)
+    precio = fields.Float(compute=actualizarTotal)
     precioUnitario = fields.Float(string="Precio unitario", readonly=1, related='idproducto.precio', default=0)
     fecha = fields.Date(string="Fecha", default=datetime.today(), readonly=1)
     pago = fields.Selection(string="Forma de pago", selection=[('efectivo',"Efectivo"),('tarjeta',"Tarjeta")])
-
-    @api.onchange('unidades')
-    def setUnits(self):
-        self.precio_copia = self.unidades * self.precioUnitario
-        self.precio = self.unidades * self.precioUnitario
-        #self.precio=self.unidades*self.idproducto.precio - another option
-
-    @api.onchange('unidades')
-    def actualizarProducto(self):
-        self.idproducto.numeroVentas+=self.unidades
-        #el problema es que si borramos el registro no cambia ya el numero en la zona productos
-        self.idproducto.brutoGenerado=self.idproducto.numeroVentas*self.idproducto.precio
-
-
-
 
 
 class Cliente(models.Model):
@@ -65,3 +67,4 @@ class Historico(models.Model):
     #Fecha de la venta
     #precio de la venta
     #dineroBrutoGenerado en todas las ventas del momento
+    #self write (self vals) return super nombreclase/modelo.write ----nocreate
