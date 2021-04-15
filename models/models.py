@@ -8,8 +8,6 @@ class Producto(models.Model):
 
 
     def write(self, values):
-
-
         producto_write = super(Producto, self).write(values)
 
         historico = {
@@ -24,11 +22,12 @@ class Producto(models.Model):
 
 
 
-    @api.model
     def actualizarProducto(self):
-
-        for x in self:
+        productos = self.env['programaventas.producto'].search([])
+        for x in productos:
             busqueda = self.env['programaventas.venta'].search([('idproducto.id', '=', x.id)])
+            x.numeroVentas=0
+            x.brutoGenerado=0
             if(len(busqueda)>0):
                 for i in busqueda:
                     x.numeroVentas += i.unidades
@@ -41,8 +40,8 @@ class Producto(models.Model):
     id = fields.Char(required=True, size=20, string="ID")   #si le das id se hace solo???
     name = fields.Char(string="Nombre Producto")
     precio = fields.Float(string="Precio", digits=(6,2))
-    numeroVentas = fields.Integer(string="Numero Ventas", compute=actualizarProducto)
-    brutoGenerado = fields.Float(string="Bruto Total", default=0, compute=actualizarProducto)
+    numeroVentas = fields.Integer(string="Numero Ventas", compute=actualizarProducto, store="true")
+    brutoGenerado = fields.Float(string="Bruto Total", default=0, compute=actualizarProducto, store="true")
 
 
 
@@ -51,14 +50,17 @@ class Producto(models.Model):
 class Venta(models.Model):
     _name = 'programaventas.venta'
 
-    @api.depends('unidades', 'precioUnitario')
+    @api.depends('unidades', 'precioUnitario','dni')
     def actualizarTotal(self):
+
         for x in self:
             x.precio=x.unidades*x.precioUnitario
 
             #self.env['programaventas.producto'].browse(1) elemento
             #self.env['programaventas.producto'].search([("name","=","nombreProducto")]) lista
 
+        self.idproducto.actualizarProducto()
+        self.dni.actualizarCliente()
 
 
 
@@ -68,7 +70,7 @@ class Venta(models.Model):
     dni = fields.Many2one('programaventas.cliente', string="Cliente")
     unidades = fields.Integer(string="Cantidad")
     idproducto = fields.Many2one('programaventas.producto', string="Producto")
-    precio = fields.Float(compute=actualizarTotal)
+    precio = fields.Float(compute=actualizarTotal, store="true")
     precioUnitario = fields.Float(string="Precio unitario", readonly=1, related='idproducto.precio', default=0)
     fecha = fields.Date(string="Fecha", default=datetime.today(), readonly=1)
     pago = fields.Selection(string="Forma de pago", selection=[('efectivo',"Efectivo"),('tarjeta',"Tarjeta")])
@@ -77,10 +79,22 @@ class Venta(models.Model):
 class Cliente(models.Model):
     _name = 'programaventas.cliente'
 
+
+    def actualizarCliente(self):
+        clientes = self.env['programaventas.cliente'].search([])
+        ventas = self.env['programaventas.venta'].search([])
+        for x in clientes:
+            x.brutoGenerado=0
+            x.numeroCompras=0
+            for i in ventas:
+                if i.dni.dni == x.dni:
+                    x.brutoGenerado += i.precio
+                    x.numeroCompras += i.unidades
+
     dni = fields.Char(required=True, string="DNI Cliente", size=9)
     name = fields.Char(string="Nombre")
-    numeroCompras = fields.Integer(readonly=1, string="Numero de compras", default=0)
-    brutoGenerado = fields.Float(string="Bruto Total", readonly=1, default=0)
+    numeroCompras = fields.Integer(readonly=1, string="Numero de compras", default=0, compute=actualizarCliente, store="true")
+    brutoGenerado = fields.Float(string="Bruto Total", readonly=1, default=0, compute=actualizarCliente, store="true")
 
 
 class Historico(models.Model):

@@ -17,13 +17,24 @@
       </field>
     </record>
 
+    <record model="ir.ui.view" id="programaventas.list_venta_graph">
+      <field name="model">programaventas.venta</field>
+      <field name="arch" type="xml">
+        <graph string="Grafico Ventas">
+          <field name="idproducto" />
+          <field name="precio" type="measure"/>
+          <field name="unidades" type="measure"/>
+        </graph>
+      </field>
+    </record>
+
 
     <!-- actions opening views on models -->
 
     <record model="ir.actions.act_window" id="programaventas.action_window_ventas">
       <field name="name">Ventas</field>
       <field name="res_model">programaventas.venta</field>
-      <field name="view_mode">tree,form</field>
+      <field name="view_mode">tree,form,graph</field>
     </record>
 
 
