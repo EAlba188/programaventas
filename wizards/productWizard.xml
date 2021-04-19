@@ -1,30 +1,25 @@
 <odoo>
+    <data>
 
-
-    <record model="ir.actions.act_window" id="product_wizard_action">
-        <field name="name">Incrementar el precio</field>
-        <field name="res_model">product.wizard</field>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="product_wizard_view"/>
-    </record>
-
-
-    <record id="product_wizard_view" model="ir.ui.view">
-        <field name="name">Incrementa precio</field>
-        <field name="model">product.wizard</field>
-        <field name="arch" type="xml">
-            <form>
-                <group>
+        <record id="product_wizard_view" model="ir.ui.view">
+            <field name="name">Incrementa precio</field>
+            <field name="model">product.wizard</field>
+            <field name="arch" type="xml">
+                <form>
                     <field name="idproductos" widget="many2many_list"/>
                     <field name="euros"/>
-                </group>
-                <footer>
                     <button name="increase_price" string="Incrementar" class="oe_right oe_highlight" type="object"/>
                     <button string="Cancel" class="oe_right" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
+                </form>
+            </field>
+        </record>
 
+        <record model="ir.actions.act_window" id="product_wizard_action">
+            <field name="name">Incrementar el precio</field>
+            <field name="res_model">product.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="product_wizard_view"/>
+        </record>
 
+    </data>
 </odoo>
