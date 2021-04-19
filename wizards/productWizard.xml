@@ -1,11 +1,13 @@
 <odoo>
 
-    <act_window id="product_wizard_action"
-                name="Incrementa Precio"
-                res_model="product.wizard"
-                src_model="programaventas.producto"
-                view_mode="form"
-                target="new"/>
+
+    <record model="ir.actions.act_window" id="product_wizard_action">
+        <field name="name">Incrementar el precio</field>
+        <field name="res_model">product.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="product_wizard_view"/>
+    </record>
+
 
     <record id="product_wizard_view" model="ir.ui.view">
         <field name="name">Incrementa precio</field>
