@@ -1,0 +1,28 @@
+<odoo>
+
+    <act_window id="product_wizard_action"
+                name="Incrementa Precio"
+                res_model="product.wizard"
+                src_model="programaventas.producto"
+                view_mode="form"
+                target="new"/>
+
+    <record id="product_wizard_view" model="ir.ui.view">
+        <field name="name">Incrementa precio</field>
+        <field name="model">product.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="idproductos" widget="many2many_list"/>
+                    <field name="euros"/>
+                </group>
+                <footer>
+                    <button name="increase_price" string="Incrementar" class="oe_right oe_highlight" type="object"/>
+                    <button string="Cancel" class="oe_right" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+</odoo>

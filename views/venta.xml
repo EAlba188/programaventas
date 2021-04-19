@@ -28,13 +28,44 @@
       </field>
     </record>
 
+    <record model="ir.ui.view" id="programaventas.list_venta_kanban">
+      <field name="name">programaventas.venta.kanban</field>
+      <field name="model">programaventas.venta</field>
+      <field name="arch" type="xml">
+        <kanban default_group="idproducto">
+          <field name="dni"/>
+          <field name="unidades"/>
+          <field name="precio"/>
+          <field name="fecha"/>
+          <field name="pago"/>
+          <templates>
+            <t t-name="kanban-box">
+              <div class="oe_kanban_card">
+                <a type="open">
+                  <field name="idproducto"/>
+                  <field name="dni"/>
+                  <field name="unidades"/>
+                  <field name="precio"/>
+                  <field name="fecha"/>
+                  <field name="pago"/>
+                </a>
+              </div>
+            </t>
+          </templates>
+        </kanban>
+      </field>
+    </record>
+
+
+
+
 
     <!-- actions opening views on models -->
 
     <record model="ir.actions.act_window" id="programaventas.action_window_ventas">
       <field name="name">Ventas</field>
       <field name="res_model">programaventas.venta</field>
-      <field name="view_mode">tree,form,graph</field>
+      <field name="view_mode">tree,form,graph,kanban</field>
     </record>
 
 
