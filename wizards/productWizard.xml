@@ -1,25 +1,40 @@
 <odoo>
     <data>
 
-        <record id="product_wizard_view" model="ir.ui.view">
+        <record id="product_wizard_propio_view" model="ir.ui.view">
             <field name="name">Incrementa precio</field>
-            <field name="model">product.wizard</field>
+            <field name="model">product.test.wizard</field>
             <field name="arch" type="xml">
-                <form>
-                    <field name="idproductos" widget="many2many_list"/>
-                    <field name="euros"/>
-                    <button name="increase_price" string="Incrementar" class="oe_right oe_highlight" type="object"/>
-                    <button string="Cancel" class="oe_right" special="cancel"/>
+                <form string="Incrementador Precios">
+                    <group>
+                        <field name="idproductos"/> <!-- widget="many2many_list"-->
+                        <field name="euros"/>
+                    </group>
+                    <footer>
+                        <button name="increasePrice" string="Incrementar" class="oe_highlight" type="object"/>
+                        <button string="Cancel" special="cancel"/>
+                    </footer>
                 </form>
             </field>
         </record>
 
-        <record model="ir.actions.act_window" id="product_wizard_action">
+        <!--<record model="ir.actions.act_window" id="product_wizard_action">
             <field name="name">Incrementar el precio</field>
             <field name="res_model">product.wizard</field>
             <field name="view_mode">form</field>
             <field name="view_id" ref="product_wizard_view"/>
+        </record>-->
+
+        <record id="product_wizard_action" model="ir.actions.act_window">
+            <field name="name">Incrementar precio</field>
+            <field name="res_model">product.test.wizard</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
         </record>
+
+    <menuitem name="Incrementarprecios" id="programaventas.incrementar_productos" parent="programaventas.menu_root"
+              action="programaventas.product_wizard_action"/>
+
 
     </data>
 </odoo>
